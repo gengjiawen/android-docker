@@ -5,20 +5,22 @@ ARG android_home=/opt/android/sdk
 
 RUN apt-get update && \
     apt-get install --yes \
-        xvfb gcc-multilib lib32z1 lib32stdc++6 build-essential \
-        libcurl4-openssl-dev libglu1-mesa libxi-dev libxmu-dev \
-        libglu1-mesa-dev
+        xvfb gcc unzip lib32z1 lib32stdc++6 build-essential
 
 # Download and install Android SDK
 RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/${sdk_version} https://dl.google.com/android/repository/${sdk_version} && \
+    mkdir -p {android_home} && \
     unzip -q /tmp/${sdk_version} -d ${android_home} && \
     rm /tmp/${sdk_version}
 
 # Set environmental variables
 ENV ANDROID_HOME ${android_home}
 ENV ANDROID_SDK_HOME ${android_home}
-ENV ADB_INSTALL_TIMEOUT 120
 ENV PATH=${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}
+ENV ADB_INSTALL_TIMEOUT 120
+
+# Fix install warning
+RUN mkdir ~/.android && echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg
 
 RUN yes | sdkmanager --licenses && sdkmanager --update
 
