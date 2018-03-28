@@ -3,8 +3,8 @@ FROM openjdk:8-jdk
 ARG sdk_version=sdk-tools-linux-3859397.zip
 ARG android_home=/opt/android/sdk
 
-RUN sudo apt-get update && \
-    sudo apt-get install --yes \
+RUN apt-get update && \
+    apt-get install --yes \
         xvfb gcc-multilib lib32z1 lib32stdc++6 build-essential \
         libcurl4-openssl-dev libglu1-mesa libxi-dev libxmu-dev \
         libglu1-mesa-dev
@@ -19,8 +19,6 @@ ENV ANDROID_HOME ${android_home}
 ENV ANDROID_SDK_HOME ${android_home}
 ENV ADB_INSTALL_TIMEOUT 120
 ENV PATH=${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}
-
-RUN mkdir ~/.android && echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg
 
 RUN yes | sdkmanager --licenses && sdkmanager --update
 
