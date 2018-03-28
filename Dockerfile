@@ -9,7 +9,7 @@ RUN apt-get update && \
 
 # Download and install Android SDK
 RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/${sdk_version} https://dl.google.com/android/repository/${sdk_version} && \
-    mkdir -p {android_home} && \
+    mkdir -p ${android_home} && \
     unzip -q /tmp/${sdk_version} -d ${android_home} && \
     rm /tmp/${sdk_version}
 
