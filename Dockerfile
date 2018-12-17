@@ -14,6 +14,7 @@ ENV ANDROID_HOME=/opt/android
 ENV ANDROID_SDK_HOME=${ANDROID_HOME}
 ENV PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
 ENV ANDROID_NDK=/opt/ndk/android-ndk-r$NDK_VERSION
+ENV ANDROID_NDK_HOME=/opt/ndk/android-ndk-r$NDK_VERSION
 ENV PATH=${PATH}:${ANDROID_NDK}
 
 # install system dependencies
