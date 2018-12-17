@@ -9,7 +9,6 @@ ARG NDK_VERSION=17c
 
 # set default environment variables
 ENV ADB_INSTALL_TIMEOUT=10
-ENV PATH=${PATH}:/opt/buck/bin/
 ENV ANDROID_HOME=/opt/android
 ENV ANDROID_SDK_HOME=${ANDROID_HOME}
 ENV PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
