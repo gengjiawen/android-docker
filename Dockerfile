@@ -1,51 +1,63 @@
-FROM openjdk:8-jdk
+FROM openjdk:8-slim
 
-ARG sdk_version=sdk-tools-linux-3859397.zip
-ARG android_home=/opt/android/sdk
+# set default build arguments
+ARG SDK_VERSION=sdk-tools-linux-3859397.zip
+ARG ANDROID_BUILD_VERSION=27
+ARG ANDROID_TOOLS_VERSION=27.0.3
+ARG BUCK_VERSION=2018.10.29.01
+ARG NDK_VERSION=17c
 
-RUN apt-get update && \
-    apt-get install --yes \
-        xvfb gcc unzip lib32z1 lib32stdc++6 build-essential
+# set default environment variables
+ENV ADB_INSTALL_TIMEOUT=10
+ENV PATH=${PATH}:/opt/buck/bin/
+ENV ANDROID_HOME=/opt/android
+ENV ANDROID_SDK_HOME=${ANDROID_HOME}
+ENV PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
+ENV ANDROID_NDK=/opt/ndk/android-ndk-r$NDK_VERSION
+ENV PATH=${PATH}:${ANDROID_NDK}
 
-# Download and install Android SDK
-RUN curl --silent --show-error --location --fail --retry 3 --output /tmp/${sdk_version} https://dl.google.com/android/repository/${sdk_version} && \
-    mkdir -p ${android_home} && \
-    unzip -q /tmp/${sdk_version} -d ${android_home} && \
-    rm /tmp/${sdk_version}
+# install system dependencies
+RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
+        apt-transport-https \
+        curl \
+        file \
+        git \
+        gnupg2 \
+        openjdk-8-jre \
+        python \
+        unzip \
+    && rm -rf /var/lib/apt/lists/*;
 
-# Set environmental variables
-ENV ANDROID_HOME ${android_home}
-ENV ANDROID_SDK_HOME ${android_home}
-ENV PATH=${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}
-ENV ADB_INSTALL_TIMEOUT 120
+# install nodejs and yarn packages from nodesource and yarn apt sources
+RUN echo "deb https://deb.nodesource.com/node_10.x stretch main" > /etc/apt/sources.list.d/nodesource.list \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list \
+    && curl -sS https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - \
+    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+    && apt-get update -qq \
+    && apt-get install -qq -y --no-install-recommends nodejs yarn \
+    && rm -rf /var/lib/apt/lists/*
 
-# Fix install warning
-RUN mkdir ~/.android && echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg
+# download and unpack NDK
+RUN curl -sS https://dl.google.com/android/repository/android-ndk-r$NDK_VERSION-linux-x86_64.zip -o /tmp/ndk.zip \
+    && mkdir /opt/ndk \
+    && unzip -q -d /opt/ndk /tmp/ndk.zip \
+    && rm /tmp/ndk.zip
 
+# Full reference at https://dl.google.com/android/repository/repository2-1.xml
+# download and unpack android
+RUN curl -sS https://dl.google.com/android/repository/${SDK_VERSION} -o /tmp/sdk.zip \
+    && mkdir /opt/android \
+    && unzip -q -d /opt/android /tmp/sdk.zip \
+    && rm /tmp/sdk.zip
+
+# Add android SDK tools
 RUN yes | sdkmanager --licenses && sdkmanager --update
+RUN sdkmanager "system-images;android-19;google_apis;armeabi-v7a" \
+    "platform-tools" \
+    "platforms;android-$ANDROID_BUILD_VERSION" \
+    "build-tools;$ANDROID_TOOLS_VERSION" \
+    "add-ons;addon-google_apis-google-23" \
+    "extras;android;m2repository"
 
-# Update SDK manager and install system image, platform and build tools
-RUN sdkmanager \
-  "tools" \
-  "platform-tools" \
-  "emulator" \
-  "extras;android;m2repository" \
-  "extras;google;m2repository" \
-  "extras;google;google_play_services"
-
-RUN sdkmanager \
-  "build-tools;25.0.3" \
-  "build-tools;26.0.2" \
-  "build-tools;27.0.3"
-
-RUN sdkmanager "platforms;android-27"
-
-#install ndk
-RUN sdkmanager \
-  "ndk-bundle" \
-  "lldb;3.0" \
-  "cmake;3.6.4111459"
-
-ENV ANDROID_NDK_HOME ${ANDROID_HOME}/ndk-bundle
-ENV ANDROID_NDK ${ANDROID_HOME}/ndk-bundle
-ENV PATH ${ANDROID_NDK_HOME}:$PATH
+# clean up unnecessary directories
+RUN rm -rf /opt/android/.android
