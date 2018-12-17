@@ -8,7 +8,7 @@ jobs:
       - run:
           name: Build docker image
           command: |
-            docker build -t gengjiawen/android-ndk .
+            docker build -t gengjiawen/android-ndk:$CIRCLE_BRANCH .
       - run:
           name: docker info
           command: |
