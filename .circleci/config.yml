@@ -12,7 +12,7 @@ jobs:
       - run:
           name: docker info
           command: |
-            docker run --rm --name rn-env gengjiawen/android-ndk bash -c "npm i -g envinfo && envinfo"
+            docker run --rm --name rn-env gengjiawen/android-ndk:$CIRCLE_BRANCH bash -c "npm i -g envinfo && envinfo"
 
 workflows:
   version: 2
