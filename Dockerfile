@@ -3,8 +3,7 @@ FROM openjdk:8-slim
 # set default build arguments
 ARG SDK_VERSION=sdk-tools-linux-3859397.zip
 ARG ANDROID_BUILD_VERSION=26
-ARG ANDROID_TOOLS_VERSION=26.0.2
-ARG BUCK_VERSION=2018.10.29.01
+ARG ANDROID_TOOLS_VERSION=26.0.3
 ARG NDK_VERSION=10e
 
 # set default environment variables
@@ -23,6 +22,7 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
         curl \
         file \
         git \
+        make \
         gnupg2 \
         openjdk-8-jre \
         python \
@@ -58,6 +58,8 @@ RUN sdkmanager "system-images;android-19;google_apis;armeabi-v7a" \
     "platforms;android-$ANDROID_BUILD_VERSION" \
     "build-tools;$ANDROID_TOOLS_VERSION" \
     "add-ons;addon-google_apis-google-23" \
+    "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" \
+    "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2" \
     "extras;android;m2repository"
 
 # clean up unnecessary directories
