@@ -22,7 +22,7 @@ RUN apt-get update -qq && apt-get install -qq -y --no-install-recommends \
         curl \
         file \
         git \
-        make \
+        build-essential \
         gnupg2 \
         openjdk-8-jre \
         python \
