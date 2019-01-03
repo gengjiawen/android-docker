@@ -4,7 +4,6 @@ FROM openjdk:8-slim
 ARG SDK_VERSION=sdk-tools-linux-3859397.zip
 ARG ANDROID_BUILD_VERSION=27
 ARG ANDROID_TOOLS_VERSION=27.0.3
-ARG BUCK_VERSION=2018.10.29.01
 ARG NDK_VERSION=17c
 
 # set default environment variables
