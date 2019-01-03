@@ -10,9 +10,16 @@ jobs:
           command: |
             docker build -t gengjiawen/android-ndk .
       - run:
-          name: docker info
+          name: Docker info
           command: |
             docker run --rm --name rn-env gengjiawen/android-ndk bash -c "npm i -g envinfo && envinfo"
+      - run:
+          name: Push docker
+          command: |
+            source ~/.bashrc
+            nvm i node
+            npm i -g envinfo && envinfo
+            node publish_docker.js
 
 workflows:
   version: 2
