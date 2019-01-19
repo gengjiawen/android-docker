@@ -51,7 +51,7 @@ RUN curl -sS https://dl.google.com/android/repository/${SDK_VERSION} -o /tmp/sdk
     && rm /tmp/sdk.zip
 
 # Add android SDK tools
-mkdir ~/.android && echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg \
+RUN mkdir ~/.android && echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg \
     && yes | sdkmanager --licenses && sdkmanager --update \
     && sdkmanager "platform-tools" \
     "platform-tools" \
