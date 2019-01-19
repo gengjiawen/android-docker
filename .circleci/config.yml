@@ -10,9 +10,14 @@ jobs:
           command: |
             docker build -t gengjiawen/android-ndk:$CIRCLE_BRANCH .
       - run:
-          name: docker info
+          name: Docker info
           command: |
             docker run --rm --name rn-env gengjiawen/android-ndk:$CIRCLE_BRANCH bash -c "npm i -g envinfo && envinfo"
+      - run:
+          name: Publish Docker
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker push gengjiawen/android-ndk:$CIRCLE_BRANCH
 
 workflows:
   version: 2

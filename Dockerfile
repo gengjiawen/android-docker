@@ -10,7 +10,7 @@ ARG NDK_VERSION=10e
 ENV ADB_INSTALL_TIMEOUT=120
 ENV ANDROID_HOME=/opt/android
 ENV ANDROID_SDK_HOME=${ANDROID_HOME}
-ENV PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
+ENV PATH=${PATH}:${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
 ENV ANDROID_NDK=/opt/ndk/android-ndk-r$NDK_VERSION
 ENV ANDROID_NDK_HOME=/opt/ndk/android-ndk-r$NDK_VERSION
 ENV PATH=${PATH}:${ANDROID_NDK}
@@ -50,11 +50,11 @@ RUN curl -sS https://dl.google.com/android/repository/${SDK_VERSION} -o /tmp/sdk
     && unzip -q -d /opt/android /tmp/sdk.zip \
     && rm /tmp/sdk.zip
 
-# Add android SDK tools
-RUN mkdir ~/.android && echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg \
+RUN cd ~ && mkdir ~/.android && echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg \
     && yes | sdkmanager --licenses && sdkmanager --update \
     && yes | sdkmanager "platform-tools" \
     "platform-tools" \
+    "emulator" \
     "platforms;android-$ANDROID_BUILD_VERSION" \
     "build-tools;$ANDROID_TOOLS_VERSION" \
     "build-tools;26.0.2" \
