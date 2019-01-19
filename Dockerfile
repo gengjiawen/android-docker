@@ -1,9 +1,9 @@
 FROM openjdk:8-slim
 
 # set default build arguments
-ARG SDK_VERSION=sdk-tools-linux-3859397.zip
-ARG ANDROID_BUILD_VERSION=27
-ARG ANDROID_TOOLS_VERSION=27.0.3
+ARG SDK_VERSION=sdk-tools-linux-4333796.zip
+ARG ANDROID_BUILD_VERSION=28
+ARG ANDROID_TOOLS_VERSION=28.0.3
 ARG NDK_VERSION=17c
 
 # set default environment variables
@@ -49,11 +49,9 @@ RUN curl -sS https://dl.google.com/android/repository/${SDK_VERSION} -o /tmp/sdk
     && unzip -q -d /opt/android /tmp/sdk.zip \
     && rm /tmp/sdk.zip
 
-RUN mkdir ~/.android && echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg \
-    && yes | sdkmanager --licenses && sdkmanager --update
-
-# Add android SDK tools
-RUN sdkmanager "platform-tools" \
+RUN cd ~ && mkdir ~/.android && echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg \
+    && yes | sdkmanager --licenses && sdkmanager --update \
+    && yes | sdkmanager "platform-tools" \
     "emulator" \
     "platforms;android-$ANDROID_BUILD_VERSION" \
     "build-tools;$ANDROID_TOOLS_VERSION" \
