@@ -57,6 +57,7 @@ RUN sdkmanager "system-images;android-19;google_apis;armeabi-v7a" \
     "platform-tools" \
     "platforms;android-$ANDROID_BUILD_VERSION" \
     "build-tools;$ANDROID_TOOLS_VERSION" \
+    "build-tools;26.0.2" \
     "add-ons;addon-google_apis-google-23" \
     "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" \
     "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2" \
