@@ -1,14 +1,13 @@
 FROM openjdk:8-slim
 
 # set default build arguments
-ARG SDK_VERSION=sdk-tools-linux-3859397.zip
+ARG SDK_VERSION=sdk-tools-linux-4333796.zip
 ARG ANDROID_BUILD_VERSION=26
 ARG ANDROID_TOOLS_VERSION=26.0.3
 ARG NDK_VERSION=10e
 
 # set default environment variables
-ENV ADB_INSTALL_TIMEOUT=10
-ENV PATH=${PATH}:/opt/buck/bin/
+ENV ADB_INSTALL_TIMEOUT=120
 ENV ANDROID_HOME=/opt/android
 ENV ANDROID_SDK_HOME=${ANDROID_HOME}
 ENV PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
@@ -52,8 +51,9 @@ RUN curl -sS https://dl.google.com/android/repository/${SDK_VERSION} -o /tmp/sdk
     && rm /tmp/sdk.zip
 
 # Add android SDK tools
-RUN yes | sdkmanager --licenses && sdkmanager --update
-RUN sdkmanager "system-images;android-19;google_apis;armeabi-v7a" \
+mkdir ~/.android && echo '### User Sources for Android SDK Manager' > ~/.android/repositories.cfg \
+    && yes | sdkmanager --licenses && sdkmanager --update \
+    && sdkmanager "platform-tools" \
     "platform-tools" \
     "platforms;android-$ANDROID_BUILD_VERSION" \
     "build-tools;$ANDROID_TOOLS_VERSION" \
@@ -62,6 +62,3 @@ RUN sdkmanager "system-images;android-19;google_apis;armeabi-v7a" \
     "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" \
     "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2" \
     "extras;android;m2repository"
-
-# clean up unnecessary directories
-RUN rm -rf /opt/android/.android
