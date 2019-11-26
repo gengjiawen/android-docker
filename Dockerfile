@@ -1,5 +1,4 @@
-FROM openjdk:8-slim
-
+FROM openjdk:8
 # set default build arguments
 ARG SDK_VERSION=sdk-tools-linux-4333796.zip
 ARG ANDROID_BUILD_VERSION=28
